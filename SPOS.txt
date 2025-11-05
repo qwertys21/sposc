@@ -1,0 +1,723 @@
+ASSEMBLER
+import java.util.*;
+import java.io.*;
+
+public class pass1 {
+    static int address = 0;
+    static ArrayList<Integer> sadd = new ArrayList<>();
+    static ArrayList<Integer> ladd = new ArrayList<>();
+    
+    public static void main(String args[]) {
+        String input = null;
+        String IS[] = {"ADD", "SUB", "MUL", "MOV"};
+        String UserReg[] = {"AREG", "BREG", "CREG", "DREG"};
+        String AD[] = {"START", "END"};
+        String DL[] = {"DC", "DS"};
+        int lc = 0;
+        int scount = 0, lcount = 0;
+        int flag = 0;
+        String tokens[] = new String[30];
+        String tt = null;
+        ArrayList<String> sv = new ArrayList<>();
+        ArrayList<String> lv = new ArrayList<>();
+        
+        try (
+            BufferedReader br = new BufferedReader(new FileReader("initial.txt"));
+            PrintWriter p = new PrintWriter(new File("IM.txt"));
+            PrintWriter p1 = new PrintWriter(new File("ST.txt"));
+            PrintWriter p2 = new PrintWriter(new File("LT.txt"))
+        ) {
+            while ((input = br.readLine()) != null) {
+                StringTokenizer st = new StringTokenizer(input, " ");
+                flag = 0; // Reset flag for each line
+                
+                while (st.hasMoreTokens()) {
+                    tt = st.nextToken();
+                    
+                    // Check if it's a starting address (numeric with length > 2)
+                    if (tt.matches("\\d+") && tt.length() > 2) {
+                        lc = Integer.parseInt(tt);
+                        p.println(lc);
+                        address = lc - 1;
+                    } else {
+                        // Check for Assembler Directives
+                        for (int i = 0; i < AD.length; i++) {
+                            if (tt.equals(AD[i])) {
+                                p.print("AD " + (i + 1) + " ");
+                            }
+                        }
+                        
+                        // Check for Instruction Set
+                        for (int i = 0; i < IS.length; i++) {
+                            if (tt.equals(IS[i])) {
+                                p.print("IS " + (i + 1) + " ");
+                            }
+                        }
+                        
+                        // Check for User Registers
+                        for (int i = 0; i < UserReg.length; i++) {
+                            if (tt.equals(UserReg[i])) {
+                                p.print((i + 1) + " ");
+                                flag = 1;
+                            }
+                        }
+                        
+                        // Check for Declarative statements
+                        for (int i = 0; i < DL.length; i++) {
+                            if (tt.equals(DL[i])) {
+                                p.print("DL " + (i + 1) + " ");
+                            }
+                        }
+                        
+                        // Handle single character symbols at end of line
+                        if (tt.length() == 1 && !(st.hasMoreTokens()) && flag == 1) {
+                            int index = sv.indexOf(tt);
+                            if (index != -1) {
+                                p.print("S" + index);
+                            } else {
+                                p.print("S" + scount);
+                                sv.add(tt);
+                                scount++;
+                            }
+                        }
+                        
+                        // Handle single character symbols (labels) at start
+                        if (tt.length() == 1 && st.hasMoreTokens()) {
+                            p.print(tt + " ");
+                            sadd.add(address);
+                        }
+                        
+                        // Handle literals
+                        if (tt.length() > 0 && tt.charAt(0) == '=') {
+                            p.print("L" + lcount);
+                            lv.add(tt);
+                            lcount++;
+                        }
+                        
+                        // Handle DS (Data Storage) directive
+                        if (tt.equals("DS")) {
+                            if (st.hasMoreTokens()) {
+                                int a = Integer.parseInt(st.nextToken());
+                                address = address + a - 1;
+                            }
+                            p.println();
+                        }
+                    }
+                }
+                
+                if (!tt.equals("DS")) {
+                    p.println();
+                }
+                address++;
+            }
+            
+            address--;
+            
+            // Assign addresses to literals
+            for (int i = 0; i < lcount; i++) {
+                ladd.add(address);
+                address++;
+            }
+            
+            // Write Symbol Table
+            for (int i = 0; i < scount; i++) {
+                p1.println(i + "\t" + sv.get(i) + "\t" + sadd.get(i));
+            }
+            
+            // Write Literal Table
+            for (int i = 0; i < lcount; i++) {
+                p2.println(i + "\t" + lv.get(i) + "\t" + ladd.get(i));
+            }
+            
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: initial.txt file not found.");
+            e.printStackTrace();
+        } catch (IOException e) {
+            System.err.println("Error: Problem reading/writing files.");
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.err.println("Error: Invalid number format in input.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Unexpected error occurred.");
+            e.printStackTrace();
+        }
+    }
+}
+
+MACRO
+import java.io.*;
+import java.util.*;
+
+public class SimpleMacroPass1 {
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new FileReader("Input.txt"));
+        PrintWriter mnt = new PrintWriter("mnt.txt");
+        PrintWriter mdt = new PrintWriter("mdt.txt");
+        PrintWriter ala = new PrintWriter("ala.txt");
+
+        String line;
+        int mdtIndex = 0, mntIndex = 0;
+
+        while ((line = br.readLine()) != null) {
+            String[] parts = line.trim().split(" ");
+            if (parts[0].equals("MACRO")) {
+                String macroName = parts[1];
+                mnt.println(macroName + "\t" + mdtIndex);
+                ala.println(macroName);
+
+                String[] args = parts[2].split(",");
+                for (int i = 0; i < args.length; i++) {
+                    if (args[i].startsWith("&")) {
+                        ala.println("AR" + i + " = " + args[i]);
+                    }
+                }
+
+                while (!(line = br.readLine()).equals("MEND")) {
+                    for (int i = 0; i < args.length; i++) {
+                        line = line.replace(args[i], "AR" + i);
+                    }
+                    mdt.println(mdtIndex++ + "\t" + line);
+                }
+                mdt.println(mdtIndex++ + "\tMEND");
+            }
+        }
+        mnt.close();
+        mdt.close();
+        ala.close();
+    }
+}
+
+CPU SCHEDULING
+FCFS
+import java.util.*;
+public class FCFS_Swapping {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        
+        // Step 1: Take number of processes
+        System.out.print("Enter number of processes: ");
+        int n = sc.nextInt();
+        
+        int pid[] = new int[n]; // Process IDs
+        int at[] = new int[n];  // Arrival Times
+        int bt[] = new int[n];  // Burst Times
+        int ct[] = new int[n];  // Completion Times
+        int tat[] = new int[n]; // Turnaround Times
+        int wt[] = new int[n];  // Waiting Times
+        
+        // Step 2: Input process details
+        for (int i = 0; i < n; i++) {
+            pid[i] = i + 1;
+            System.out.print("Enter arrival time for P" + pid[i] + ": ");
+            at[i] = sc.nextInt();
+            System.out.print("Enter burst time for P" + pid[i] + ": ");
+            bt[i] = sc.nextInt();
+        }
+        
+        // Step 3: Sort (swap) processes by Arrival Time
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (at[i] > at[j]) {
+                    // Swap arrival time
+                    int temp = at[i];
+                    at[i] = at[j];
+                    at[j] = temp;
+                    // Swap burst time
+                    temp = bt[i];
+                    bt[i] = bt[j];
+                    bt[j] = temp;
+                    // Swap process ID
+                    temp = pid[i];
+                    pid[i] = pid[j];
+                    pid[j] = temp;
+                }
+            }
+        }
+        
+        // Step 4: Calculate Completion Time (CT)
+        ct[0] = at[0] + bt[0]; // First process
+        for (int i = 1; i < n; i++) {
+            if (at[i] > ct[i - 1]) {
+                // CPU is idle until process arrives
+                ct[i] = at[i] + bt[i];
+            } else {
+                ct[i] = ct[i - 1] + bt[i];
+            }
+        }
+        
+        // Step 5: Calculate Turnaround Time (TAT) and Waiting Time (WT)
+        for (int i = 0; i < n; i++) {
+            tat[i] = ct[i] - at[i];
+            wt[i] = tat[i] - bt[i];
+        }
+        
+        // Step 6: Display results
+        System.out.println("\nPID\tAT\tBT\tCT\tTAT\tWT");
+        for (int i = 0; i < n; i++) {
+            System.out.println("P" + pid[i] + "\t" + at[i] + "\t" + bt[i] +
+                               "\t" + ct[i] + "\t" + tat[i] + "\t" + wt[i]);
+        }
+    }
+}
+
+
+
+SJF
+import java.util.*;
+
+class Process {
+    int id, at, bt, ct, tat, wt, rt; 
+    int remainingBt; // remaining burst time
+    boolean isCompleted = false;
+}
+
+public class SJF_Preemptive {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input number of processes
+        System.out.print("Enter number of processes: ");
+        int n = sc.nextInt();
+
+        Process[] p = new Process[n];
+
+        // Input arrival and burst time
+        for (int i = 0; i < n; i++) {
+            p[i] = new Process();
+            p[i].id = i + 1;
+            System.out.print("Enter Arrival time of P" + (i + 1) + ": ");
+            p[i].at = sc.nextInt();
+            System.out.print("Enter Burst time of P" + (i + 1) + ": ");
+            p[i].bt = sc.nextInt();
+            p[i].remainingBt = p[i].bt;
+        }
+
+        int time = 0, completed = 0;
+        int sumTAT = 0, sumWT = 0, sumRT = 0;
+
+        while (completed != n) {
+            int idx = -1;
+            int minBT = Integer.MAX_VALUE;
+
+            // Find process with shortest remaining burst time among arrived
+            for (int i = 0; i < n; i++) {
+                if (p[i].at <= time && !p[i].isCompleted && p[i].remainingBt < minBT) {
+                    minBT = p[i].remainingBt;
+                    idx = i;
+                }
+            }
+
+            if (idx != -1) {
+                // First response time
+                if (p[idx].remainingBt == p[idx].bt) {
+                    p[idx].rt = time - p[idx].at;
+                }
+
+                // Execute process for 1 unit
+                p[idx].remainingBt--;
+                time++;
+
+                // If process is finished
+                if (p[idx].remainingBt == 0) {
+                    p[idx].ct = time;
+                    p[idx].tat = p[idx].ct - p[idx].at;
+                    p[idx].wt = p[idx].tat - p[idx].bt;
+
+                    sumTAT += p[idx].tat;
+                    sumWT += p[idx].wt;
+                    sumRT += p[idx].rt;
+
+                    p[idx].isCompleted = true;
+                    completed++;
+                }
+            } else {
+                // If no process has arrived yet
+                time++;
+            }
+        }
+
+        // Print results
+        System.out.println("\nPID\tAT\tBT\tCT\tTAT\tWT\tRT");
+        for (int i = 0; i < n; i++) {
+            System.out.println("P" + p[i].id + "\t" + p[i].at + "\t" + p[i].bt + "\t" +
+                    p[i].ct + "\t" + p[i].tat + "\t" + p[i].wt + "\t" + p[i].rt);
+        }
+
+        System.out.println("\nAverage TAT: " + (sumTAT / (float) n));
+        System.out.println("Average WT: " + (sumWT / (float) n));
+        System.out.println("Average RT: " + (sumRT / (float) n));
+    }
+}
+
+
+
+
+RR
+import java.util.*;
+
+class Process {
+    int id;   // Process ID (1..n)
+    int at;   // Arrival Time
+    int bt;   // Burst Time (total CPU time required)
+    int rt;   // Remaining Time
+    int ct;   // Completion Time
+    int tat;  // Turnaround Time
+    int wt;   // Waiting Time
+
+    Process(int id, int at, int bt) {
+        this.id = id;
+        this.at = at;
+        this.bt = bt;
+        this.rt = bt; // remaining time initially = burst time
+    }
+}
+
+public class RoundRobinEasy {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Number of processes (enter in arrival order): ");
+        int n = sc.nextInt();
+
+        System.out.print("Time quantum: ");
+        int tq = sc.nextInt();
+
+        // Read processes
+        Process[] p = new Process[n];
+        for (int i = 0; i < n; i++) {
+            System.out.print("Arrival time of P" + (i + 1) + ": ");
+            int at = sc.nextInt();
+            System.out.print("Burst time of P" + (i + 1) + ": ");
+            int bt = sc.nextInt();
+            p[i] = new Process(i + 1, at, bt);
+        }
+
+        // Ready queue holds indices of process array (0..n-1)
+        Queue<Integer> q = new LinkedList<>();
+
+        // Start time from first process arrival
+        int time = p[0].at;
+        int next = 0;               
+        double sumTAT = 0, sumWT = 0;
+        int finished = 0;
+
+        // Add processes which have already arrived at the start time
+        while (next < n && p[next].at <= time) {
+            q.add(next++);
+        }
+
+        // Main scheduling loop
+        while (finished < n) {
+            // If ready queue empty, jump to next arrival
+            if (q.isEmpty()) {
+                time = p[next].at;
+                q.add(next++);
+            }
+
+            int idx = q.poll();     
+            Process cur = p[idx];
+
+            // Run for time quantum or remaining time, whichever is smaller
+            int run = Math.min(tq, cur.rt);
+            cur.rt -= run;
+            time += run;
+
+            // While CPU was running, add processes that arrived meanwhile
+            while (next < n && p[next].at <= time) {
+                q.add(next++);
+            }
+
+            // If process finished, record times; otherwise, requeue it
+            if (cur.rt == 0) {
+                cur.ct = time;
+                cur.tat = cur.ct - cur.at;
+                cur.wt = cur.tat - cur.bt;
+                sumTAT += cur.tat;
+                sumWT += cur.wt;
+                finished++;
+            } else {
+                q.add(idx); 
+            }
+        }
+
+        // Print results
+        System.out.println("\nPID\tAT\tBT\tCT\tTAT\tWT");
+        for (Process pr : p) {
+            System.out.printf("P%d\t%d\t%d\t%d\t%d\t%d\n",
+                    pr.id, pr.at, pr.bt, pr.ct, pr.tat, pr.wt);
+        }
+        System.out.printf("\nAverage TAT: %.2f\nAverage WT: %.2f\n", sumTAT / n, sumWT / n);
+
+        sc.close();
+    }
+}
+
+Priority
+import java.util.Scanner;
+
+public class PriorityNonPreemptiveEasy {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input number of processes
+        System.out.print("Enter number of processes: ");
+        int n = sc.nextInt();
+
+        int[] bt = new int[n];      // burst times
+        int[] pr = new int[n];      // priorities
+        int[] wt = new int[n];      // waiting times
+        int[] tat = new int[n];     // turnaround times
+        int[] pid = new int[n];     // process IDs
+
+        // Input burst times and priorities
+        for (int i = 0; i < n; i++) {
+            System.out.print("Enter burst time for Process " + (i + 1) + ": ");
+            bt[i] = sc.nextInt();
+            System.out.print("Enter priority for Process " + (i + 1) + ": ");
+            pr[i] = sc.nextInt();
+            pid[i] = i + 1; // process IDs (P1, P2, ...)
+        }
+
+        // Sort processes by priority (small number = high priority)
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = i + 1; j < n; j++) {
+                if (pr[i] > pr[j]) {
+                    // swap priority
+                    int temp = pr[i]; pr[i] = pr[j]; pr[j] = temp;
+                    // swap burst time
+                    temp = bt[i]; bt[i] = bt[j]; bt[j] = temp;
+                    // swap process id
+                    temp = pid[i]; pid[i] = pid[j]; pid[j] = temp;
+                }
+            }
+        }
+
+        // Calculate waiting time and turnaround time
+        wt[0] = 0; // first process has 0 waiting time
+        tat[0] = bt[0];
+        for (int i = 1; i < n; i++) {
+            wt[i] = wt[i - 1] + bt[i - 1];
+            tat[i] = wt[i] + bt[i];
+        }
+
+        // Print result
+        System.out.println("\nProcess\tBT\tPriority\tWT\tTAT");
+        int totalWT = 0, totalTAT = 0;
+        for (int i = 0; i < n; i++) {
+            System.out.println("P" + pid[i] + "\t" + bt[i] + "\t" + pr[i] + "\t\t" + wt[i] + "\t" + tat[i]);
+            totalWT += wt[i];
+            totalTAT += tat[i];
+        }
+
+        // Print averages
+        System.out.println("\nAverage Waiting Time = " + (float) totalWT / n);
+        System.out.println("Average Turnaround Time = " + (float) totalTAT / n);
+
+        sc.close();
+    }
+}
+
+
+PAGE REPLACEMENT
+import java.util.*;
+
+public class PageReplacementSimulator {
+
+    // --- 1. First-In, First-Out (FIFO) ---
+    // The first page to enter memory is the first to be removed.
+    public static void fifo(List<Integer> referenceString, int frames) {
+        System.out.println("--- FIFO Algorithm ---");
+        // A Queue is perfect for FIFO because it follows the "first-in, first-out" principle.
+        Queue<Integer> memory = new LinkedList<>();
+        int faults = 0;
+
+        for (int page : referenceString) {
+            // If the page is NOT in memory, it's a page fault.
+            if (!memory.contains(page)) {
+                faults++;
+                // If memory is full, remove the oldest page (the one at the front of the queue).
+                if (memory.size() == frames) {
+                    memory.poll(); // .poll() removes the head of the queue.
+                }
+                // Add the new page to the back of the queue.
+                memory.add(page);
+            }
+            // Print the current state
+            System.out.println("Page: " + page + " | Memory: " + memory);
+        }
+        System.out.println("Total FIFO Page Faults: " + faults + "\n");
+    }
+
+    // --- 2. Least Recently Used (LRU) ---
+    // The page that has not been used for the longest time is removed.
+    public static void lru(List<Integer> referenceString, int frames) {
+        System.out.println("--- LRU Algorithm ---");
+        // We use a List to easily manage the order of use.
+        List<Integer> memory = new ArrayList<>();
+        int faults = 0;
+
+        for (int page : referenceString) {
+            // If the page is NOT in memory, it's a page fault.
+            if (!memory.contains(page)) {
+                faults++;
+                // If memory is full, remove the least recently used page (the one at the beginning of the list).
+                if (memory.size() == frames) {
+                    memory.remove(0);
+                }
+            } else {
+                // If the page IS already in memory (a "hit"), we remove it from its current position...
+                memory.remove((Integer) page);
+            }
+            // ...and add it to the end of the list to mark it as the most recently used.
+            memory.add(page);
+
+            // Print the current state
+            System.out.println("Page: " + page + " | Memory: " + memory);
+        }
+        System.out.println("Total LRU Page Faults: " + faults + "\n");
+    }
+
+    // --- 3. Optimal Page Replacement (OPT) ---
+    // The page that will not be used for the longest time in the future is removed.
+    public static void optimal(List<Integer> referenceString, int frames) {
+        System.out.println("--- Optimal Algorithm ---");
+        List<Integer> memory = new ArrayList<>();
+        int faults = 0;
+
+        for (int i = 0; i < referenceString.size(); i++) {
+            int page = referenceString.get(i);
+
+            // If the page is NOT in memory, it's a page fault.
+            if (!memory.contains(page)) {
+                faults++;
+                // If memory is full, we need to find the best page to replace.
+                if (memory.size() == frames) {
+                    int replaceIndex = -1;
+                    int farthest = i; // The index of the page to be replaced.
+
+                    // Look at each page currently in memory.
+                    for (int pageInMemory : memory) {
+                        int nextUse = -1;
+                        // Find the next time this page will be used.
+                        for (int j = i + 1; j < referenceString.size(); j++) {
+                            if (pageInMemory == referenceString.get(j)) {
+                                nextUse = j;
+                                break;
+                            }
+                        }
+
+                        // If the page is never used again, it's the perfect one to replace.
+                        if (nextUse == -1) {
+                            replaceIndex = memory.indexOf(pageInMemory);
+                            break;
+                        }
+
+                        // Otherwise, track which page is used farthest in the future.
+                        if (nextUse > farthest) {
+                            farthest = nextUse;
+                            replaceIndex = memory.indexOf(pageInMemory);
+                        }
+                    }
+                    // If no page is found that is never used again, replace the one used farthest away.
+                    // If replaceIndex is still -1 (e.g., all pages in memory have a future use),
+                    // default to removing the first page.
+                    if (replaceIndex == -1) {
+                         memory.remove(0);
+                    } else {
+                         memory.remove(replaceIndex);
+                    }
+                }
+                // Add the new page to memory.
+                memory.add(page);
+            }
+            // Print the current state
+            System.out.println("Page: " + page + " | Memory: " + memory);
+        }
+        System.out.println("Total Optimal Page Faults: " + faults + "\n");
+    }
+
+    public static void main(String[] args) {
+        // The list of pages requested by the CPU.
+        List<Integer> referenceString = Arrays.asList(7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3, 2);
+        // The number of available memory slots (frames).
+        int frames = 3;
+
+        System.out.println("Reference String: " + referenceString);
+        System.out.println("Number of Frames: " + frames + "\n");
+
+        // Run each algorithm
+        fifo(referenceString, frames);
+        lru(referenceString, frames);
+        optimal(referenceString, frames);
+    }
+}
+
+BANKER'S ALGO
+import java.util.*;
+
+public class Bankers {
+    int np, nr;
+    int[][] alloc, max, need;
+    int[] avail;
+
+    void read() {
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Enter number of processes and resources: ");
+        np = sc.nextInt(); nr = sc.nextInt();
+        alloc = new int[np][nr]; max = new int[np][nr]; need = new int[np][nr]; avail = new int[nr];
+        System.out.println("Enter allocation matrix:");
+        for (int i=0;i<np;i++) for (int j=0;j<nr;j++) alloc[i][j]=sc.nextInt();
+        System.out.println("Enter max matrix:");
+        for (int i=0;i<np;i++) for (int j=0;j<nr;j++) max[i][j]=sc.nextInt();
+        System.out.println("Enter available resources:");
+        for (int j=0;j<nr;j++) avail[j]=sc.nextInt();
+        sc.close();
+    }
+
+    boolean canRun(int i, boolean[] done){
+        for (int j=0;j<nr;j++) if (need[i][j] > avail[j]) return false;
+        return !done[i];
+    }
+
+    void calcNeed(){
+        for (int i=0;i<np;i++) for (int j=0;j<nr;j++) need[i][j] = max[i][j] - alloc[i][j];
+    }
+
+    void isSafe(){
+        read();
+        calcNeed();
+        boolean[] done = new boolean[np];
+        int completed = 0;
+        List<Integer> seq = new ArrayList<>();
+        while (completed < np) {
+            boolean progressed = false;
+            for (int i=0;i<np;i++){
+                if (canRun(i, done)){
+                    // allocate -> run -> release
+                    for (int j=0;j<nr;j++) avail[j] += alloc[i][j];
+                    done[i] = true;
+                    seq.add(i);
+                    completed++;
+                    progressed = true;
+                }
+            }
+            if (!progressed) break;
+        }
+        if (completed==np) {
+            System.out.println("System is in a SAFE state.");
+            System.out.print("Safe sequence: ");
+            for (int p: seq) System.out.print("P"+p + " ");
+            System.out.println();
+        } else {
+            System.out.println("System is NOT in a safe state.");
+        }
+    }
+
+    public static void main(String[] args){
+        new Bankers().isSafe();
+    }
+}
+
+
+
