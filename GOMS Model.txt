@@ -1,0 +1,243 @@
+GOMS Model: Select an Item and Add It to Cart (E-Commerce)
+1. Goal
+Primary Goal: Successfully locate, select, and add a desired product to the online shopping cart for potential purchase.
+2. Operators (Atomic Actions)
+•	Position hand on mouse or keyboard
+•	Visually scan webpage for navigation elements (categories, search bar, product listings)
+•	Scroll page using mouse wheel, trackpad, or scroll bar
+•	Click on category links or product thumbnails
+•	Click product to open detailed product page
+•	Read and evaluate product information (description, price, reviews)
+•	Click drop-down menus to select product variants (size, color, model)
+•	Type or use increment/decrement buttons to adjust quantity
+•	Click "Add to Cart" button
+•	Observe visual feedback (cart icon update, confirmation message)
+•	Click "View Cart" or cart icon to verify item addition
+3. Methods (Procedural Steps)
+Method 1: Category Browsing
+•	Navigate to homepage or category section
+•	Move mouse to category menu (e.g., Electronics, Clothing)
+•	Click desired category
+•	Scroll through product grid/list
+•	Visually scan items until desired product is found
+•	Click product image or name to open product page
+•	Review product details, specifications, and pricing
+•	Select required variants (size, color) using drop-downs or buttons
+•	Verify or modify quantity field (default is usually 1)
+•	Click "Add to Cart" button
+•	Wait for confirmation (popup, animation, or cart counter update)
+•	Optionally click cart icon to verify addition
+Method 2: Direct Search
+•	Move mouse to search bar at top of page
+•	Click search field to activate cursor
+•	Type product name or keywords (e.g., "Nike running shoes size 10")
+•	Press Enter or click search icon
+•	Review search results list
+•	Click on matching product
+•	Continue with variant selection and quantity adjustment
+•	Click "Add to Cart"
+•	Confirm successful addition
+Method 3: Filter-Based Navigation
+•	Browse to relevant category
+•	Use filter sidebar (price range, brand, ratings)
+•	Click checkboxes or sliders to narrow results
+•	Scroll through filtered items
+•	Select desired product
+•	Complete variant selection and add to cart
+4. Selection Rules (Decision Logic)
+•	If user knows exact product name → Use Method 2 (Direct Search)
+•	If user is exploring options or comparing products → Use Method 1 (Category Browsing) or Method 3 (Filter-Based)
+•	If product has multiple variants (size, color) → Selection rules must be completed before "Add to Cart" activates
+•	If product is out of stock → Display error message and disable "Add to Cart" button
+•	If user wants multiple quantities → Modify quantity field before clicking "Add to Cart"
+•	If user is on mobile device → Methods adapt to touch gestures (tap instead of click, swipe to scroll)
+•	If user prefers keyboard navigation → Use Tab key to move between elements and Enter to select
+5. Usability Notes
+•	Visual Clarity: Prominent "Add to Cart" button with contrasting color improves findability
+•	Feedback: Immediate visual confirmation (cart badge update, success message, mini cart preview) reduces user uncertainty
+•	Error Prevention: Disable "Add to Cart" when required selections are incomplete; display clear messaging about missing information
+•	Efficiency: Quick view features allow variant selection without leaving the listing page
+•	Recovery: "Continue Shopping" option after adding allows seamless multi-item purchasing
+•	Accessibility: Keyboard shortcuts, screen reader compatibility, and clear focus indicators support diverse user needs
+•	Mobile Optimization: Touch-friendly buttons, simplified layouts, and sticky "Add to Cart" buttons enhance mobile experience
+
+
+Scenario 1: Goal – Close the Window
+1. Goal
+Primary Goal: Ensure the specific application or browser window is fully closed (not just minimized or hidden).
+
+2. Operators (Atomic Actions)
+Physically move hand to mouse.
+
+Visually scan screen to locate the active window and its close button (usually a red “X” in the top-right/corner).
+
+Move mouse pointer to target (close button).
+
+Press mouse button (usually left click).
+
+Wait for system to remove window from the display.
+
+(Alternative) Press keyboard shortcut (Alt+F4 on Windows, Command+W on Mac).
+
+3. Methods (Procedural Steps)
+Method 1: Using Mouse
+
+Move right hand to mouse.
+
+Visually locate the correct window (if multiple).
+
+Scan (top-right/top-left) for the 'X' or close button.
+
+Move mouse pointer onto the close button.
+
+Press and release left mouse button.
+
+Confirm window has closed (visually).
+
+Method 2: Using Keyboard
+
+Place hands on keyboard.
+
+For Windows: Hold “Alt” key, tap “F4”.
+
+For Mac: Hold “Command” and tap "W".
+
+Look for visual confirmation that the window has closed.
+
+4. Selection Rules (Decision Logic)
+If user is already using the mouse, use Method 1.
+
+If user prefers or both hands are on the keyboard, use Method 2.
+
+If multiple windows are open, ensure the correct window is active/focused before executing the close operation.
+
+5. Usability Notes
+Visibility of the close button and intuitive placement enhance efficiency.
+
+Keyboard shortcuts boost expert performance and accessibility.
+
+Error prevention: Confirm if unsaved work would be lost before closing.
+
+Scenario 2: Goal – Delete the Mail
+1. Goal
+Primary Goal: Permanently remove selected email(s) from the inbox or folder.
+
+2. Operators
+Move hand to mouse (or keep on keyboard).
+
+Visually scan inbox for target email(s).
+
+Move mouse pointer to specific email.
+
+Click to select (single email) or use checkboxes (multiple).
+
+Press 'Delete' key or move mouse to 'Delete' button/icon and click.
+
+Confirm deletion if prompted (e.g., click “OK” or “Yes”).
+
+3. Methods
+Method 1: Using Mouse
+
+Scan inbox, find the email to delete.
+
+Move mouse and click email to select.
+
+Move mouse to toolbar “Delete” icon, click to initiate deletion.
+
+If confirmation appears, click “OK”/“Yes”.
+
+Method 2: Using Keyboard
+
+Use arrow keys or Tab to highlight/select the email.
+
+Press “Delete” key.
+
+Handle confirmation dialog with keyboard (Enter/Tab to “Yes”).
+
+Method 3: Deleting Multiple Mails
+
+Hold “Ctrl” (Cmd on Mac) for selection or use checkboxes.
+
+Click each email to select.
+
+Click toolbar “Delete” or press “Delete” key.
+
+Confirm deletion if required.
+
+4. Selection Rules
+If deleting one email, use single selection and delete.
+
+If deleting many, use batch select (checkboxes, “Select All”, Shift+Click).
+
+If mouse is primary input, use toolbar. If keyboard preferred, use shortcuts.
+
+5. Usability Notes
+Location and clarity of “Delete” operations impact speed.
+
+Confirmation dialogs help prevent accidental loss.
+
+Undo/restore options add error recovery.
+
+Scenario 3: Goal – Select an Item and Add It to Cart (E-Commerce)
+1. Goal
+Primary Goal: Successfully add a chosen item to the online shopping cart.
+
+2. Operators
+Move hand to mouse/keyboard.
+
+Visually scan webpage for categories/items.
+
+Use mouse wheel/trackpad or scroll bar to move through content.
+
+Click on item for details.
+
+Click drop-downs to select attributes (size, color) if applicable.
+
+Enter item quantity (by typing or clicking).
+
+Move to and click “Add to Cart” button.
+
+Click to view cart and check addition.
+
+3. Methods
+Method 1: Browsing
+
+Open site, browse categories.
+
+Scroll and scan items.
+
+When the desired item appears, move mouse and click to open its page.
+
+If necessary, select variant options (size, color) via drop-down or button.
+
+Enter or adjust the quantity field.
+
+Click “Add to Cart”.
+
+Optionally, click “View Cart” to verify addition.
+
+Method 2: Searching
+
+Use search bar to enter item name; press Enter.
+
+Review search results; click desired item.
+
+Continue as above (variant selection, add to cart).
+
+4. Selection Rules
+If item specifics are known, user prefers search.
+
+If item needs evaluation/discovery, user browses categories.
+
+If multiple options/variants, ensure all selections are filled before “Add to Cart” becomes active.
+
+If error occurs (e.g., stock unavailable), handle notification.
+
+5. Usability Notes
+Prominent “Add to Cart” button and clear item info aids conversion.
+
+Error feedback (out-of-stock) prevents failed user actions.
+
+Assurance after adding (e.g., side cart popup) reduces uncertainty.
+
+

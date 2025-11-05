@@ -1,0 +1,101 @@
+Scenario 1: Goal – Close the Window
+1. Goal
+•	Primary Goal: Ensure the specific application or browser window is fully closed (not just minimized or hidden).
+2. Operators (Atomic Actions)
+•	Physically move hand to mouse.
+•	Visually scan screen to locate the active window and its close button (usually a red “X” in the top-right/corner).
+•	Move mouse pointer to target (close button).
+•	Press mouse button (usually left click).
+•	Wait for system to remove window from the display.
+•	(Alternative) Press keyboard shortcut (Alt+F4 on Windows, Command+W on Mac).
+3. Methods (Procedural Steps)
+Method 1: Using Mouse
+•	Move right hand to mouse.
+•	Visually locate the correct window (if multiple).
+•	Scan (top-right/top-left) for the 'X' or close button.
+•	Move mouse pointer onto the close button.
+•	Press and release left mouse button.
+•	Confirm window has closed (visually).
+Method 2: Using Keyboard
+•	Place hands on keyboard.
+•	For Windows: Hold “Alt” key, tap “F4”.
+•	For Mac: Hold “Command” and tap "W".
+•	Look for visual confirmation that the window has closed.
+4. Selection Rules (Decision Logic)
+•	If user is already using the mouse, use Method 1.
+•	If user prefers or both hands are on the keyboard, use Method 2.
+•	If multiple windows are open, ensure the correct window is active/focused before executing the close operation.
+5. Usability Notes
+•	Visibility of the close button and intuitive placement enhance efficiency.
+•	Keyboard shortcuts boost expert performance and accessibility.
+•	Error prevention: Confirm if unsaved work would be lost before closing.
+________________________________________
+Scenario 2: Goal – Delete the Mail
+1. Goal
+•	Primary Goal: Permanently remove selected email(s) from the inbox or folder.
+2. Operators
+•	Move hand to mouse (or keep on keyboard).
+•	Visually scan inbox for target email(s).
+•	Move mouse pointer to specific email.
+•	Click to select (single email) or use checkboxes (multiple).
+•	Press 'Delete' key or move mouse to 'Delete' button/icon and click.
+•	Confirm deletion if prompted (e.g., click “OK” or “Yes”).
+3. Methods
+Method 1: Using Mouse
+•	Scan inbox, find the email to delete.
+•	Move mouse and click email to select.
+•	Move mouse to toolbar “Delete” icon, click to initiate deletion.
+•	If confirmation appears, click “OK”/“Yes”.
+Method 2: Using Keyboard
+•	Use arrow keys or Tab to highlight/select the email.
+•	Press “Delete” key.
+•	Handle confirmation dialog with keyboard (Enter/Tab to “Yes”).
+Method 3: Deleting Multiple Mails
+•	Hold “Ctrl” (Cmd on Mac) for selection or use checkboxes.
+•	Click each email to select.
+•	Click toolbar “Delete” or press “Delete” key.
+•	Confirm deletion if required.
+4. Selection Rules
+•	If deleting one email, use single selection and delete.
+•	If deleting many, use batch select (checkboxes, “Select All”, Shift+Click).
+•	If mouse is primary input, use toolbar. If keyboard preferred, use shortcuts.
+5. Usability Notes
+•	Location and clarity of “Delete” operations impact speed.
+•	Confirmation dialogs help prevent accidental loss.
+•	Undo/restore options add error recovery.
+________________________________________
+Scenario 3: Goal – Select an Item and Add It to Cart (E-Commerce)
+1. Goal
+•	Primary Goal: Successfully add a chosen item to the online shopping cart.
+2. Operators
+•	Move hand to mouse/keyboard.
+•	Visually scan webpage for categories/items.
+•	Use mouse wheel/trackpad or scroll bar to move through content.
+•	Click on item for details.
+•	Click drop-downs to select attributes (size, color) if applicable.
+•	Enter item quantity (by typing or clicking).
+•	Move to and click “Add to Cart” button.
+•	Click to view cart and check addition.
+3. Methods
+Method 1: Browsing
+•	Open site, browse categories.
+•	Scroll and scan items.
+•	When the desired item appears, move mouse and click to open its page.
+•	If necessary, select variant options (size, color) via drop-down or button.
+•	Enter or adjust the quantity field.
+•	Click “Add to Cart”.
+•	Optionally, click “View Cart” to verify addition.
+Method 2: Searching
+•	Use search bar to enter item name; press Enter.
+•	Review search results; click desired item.
+•	Continue as above (variant selection, add to cart).
+4. Selection Rules
+•	If item specifics are known, user prefers search.
+•	If item needs evaluation/discovery, user browses categories.
+•	If multiple options/variants, ensure all selections are filled before “Add to Cart” becomes active.
+•	If error occurs (e.g., stock unavailable), handle notification.
+5. Usability Notes
+•	Prominent “Add to Cart” button and clear item info aids conversion.
+•	Error feedback (out-of-stock) prevents failed user actions.
+•	Assurance after adding (e.g., side cart popup) reduces uncertainty.
+
